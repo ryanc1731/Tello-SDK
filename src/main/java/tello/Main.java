@@ -38,31 +38,7 @@ public class Main
 	    
 	    Demo1 demo = new Demo1();
 
-//		Demo2 demo = new Demo2();
 
-//	    Demo3 demo = new Demo3();
-
-//	    Demo4 demo = new Demo4();
-
-//	    Demo5 demo = new Demo5();
-	    
-//	    FlySquare demo = new FlySquare();
-
-//	    FlyGrid demo = new FlyGrid();
-
-//	    FindMissionPad demo = new FindMissionPad();
-
-//	    FlyController demo = new FlyController();
-		
-//	    FindMarker demo = new FindMarker();
-		
-//	    TrackMarker demo = new TrackMarker();
-	
-//	    FindFace demo = new FindFace();
-
-//	    FindFace2 demo = new FindFace2();
-	    
-	    // Run that program.
 	    demo.execute();
 	    
 	    logger.info("end");

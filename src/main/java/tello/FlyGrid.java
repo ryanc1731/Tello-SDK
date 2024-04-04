@@ -3,7 +3,10 @@ package tello;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.opencv.core.Rect;
+import tellolib.camera.FaceDetection;
 import tellolib.camera.TelloCamera;
+
 import tellolib.communication.TelloConnection;
 import tellolib.control.TelloControl;
 import tellolib.drone.TelloDrone;
@@ -15,16 +18,25 @@ public class FlyGrid
 	private TelloControl	telloControl;
 	private TelloDrone		drone;
 	private TelloCamera		camera;
+	private FaceDetection   faceDectector;
+	private boolean         detectFaces=false;
 	
 	public void execute()
 	{
+		
+		boolean found= false;
+
 		logger.info("start");
 		
 	    telloControl = TelloControl.getInstance();
 	    
 	    drone = TelloDrone.getInstance();
+
+		
 	    
 	    camera = TelloCamera.getInstance();
+
+		faceDectector=FaceDetection.getInstance();
 
 	    telloControl.setLogLevel(Level.FINE);
 
@@ -43,6 +55,13 @@ public class FlyGrid
 		    camera.startVideoCapture(true);
 		    
 		    telloControl.takeOff();
+
+
+			
+			if(detectFaces)
+		{
+			found =faceDectector.detectFaces();
+
 		    
 		    // Now we will execute a series of movement commands to fly in a grid
 		    // pattern. Distances in centimeters.
@@ -65,7 +84,14 @@ public class FlyGrid
 		    	
 		    	telloControl.rotateLeft(90);
 		    }
+			if(found)
+			{
+				Rect[] faces= faceDectector.getFaces();
+				camera.addTarget(null);
+				camera.addTarget(faces[0]);
+			}
 	    }	
+		}
 	    catch (Exception e) {
 	    	e.printStackTrace();
 	    } finally 
@@ -77,7 +103,8 @@ public class FlyGrid
 	    		catch(Exception e) { e.printStackTrace();}
 	    	}
 	    }
-	    
+		
+	
     	telloControl.disconnect();
 	    
 	    logger.info("end");
@@ -87,7 +114,7 @@ public class FlyGrid
 	
 	private String updateWindow()
 	{
-    	 return String.format("Batt: %d  Alt: %d  Hdg: %d", drone.getBattery(), drone.getHeight(), 
-    			drone.getHeading());
+    	return String.format("Batt: %d  Alt: %d  Hdg: %d  Rdy: %b  Detect: %b", drone.getBattery(), drone.getHeight(), 
+    			drone.getHeading(), drone.isFlying(), detectFaces);
 	}
 }
