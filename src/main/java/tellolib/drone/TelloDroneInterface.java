@@ -185,7 +185,7 @@ public interface TelloDroneInterface
   	 * selected camera(s).
   	 * @param enabled True if mission mode enabled, false if not.
   	 */
-  	void setMissionMode(boolean enabled);
+  	// void setMissionMode(boolean enabled);
   	
   	/**
   	 * Get the last recorded mission mode state.

@@ -277,7 +277,7 @@ public interface TelloControlInterface
    * @param enabled True to enable, false to disable.
    * @param camera Select which camera(s) used for detection when enabled.
    */
-  void setMissionMode(boolean enabled, MissionDetectionCamera camera);
+  // void setMissionMode(boolean enabled, MissionDetectionCamera camera);
   
   /**
    * Set drone into 'station' mode. Turns off access point and connects to

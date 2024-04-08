@@ -1,4 +1,4 @@
-package tello;
+package demos;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +42,7 @@ public class FindMissionPad
 		    
 		    // Turn on Mission Pad detection and select camera to monitor.
 		    
-		    telloControl.setMissionMode(true, MissionDetectionCamera.downward);
+		    // telloControl.setMissionMode(true, MissionDetectionCamera.downward);
 		    
 		    // Create background thread to watch for mission pad under drone. It 
 		    // will signal to stop the search. WatchForPad is defined below.

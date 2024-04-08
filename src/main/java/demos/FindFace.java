@@ -1,6 +1,5 @@
-package tello;
+package demos;
 
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,13 +8,13 @@ import org.opencv.core.Rect;
 import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerState;
 
-import tellolib.camera.ArucoMarkers;
+import tellolib.camera.FaceDetection;
 import tellolib.camera.TelloCamera;
 import tellolib.command.TelloFlip;
 import tellolib.control.TelloControl;
 import tellolib.drone.TelloDrone;
 
-public class FindMarker
+public class FindFace
 {
 	private final Logger logger = Logger.getGlobal(); 
 
@@ -23,15 +22,14 @@ public class FindMarker
 	private TelloDrone			drone;
 	private TelloCamera			camera;
 	private ControllerManager	controllers;
-	private ArucoMarkers		markerDetector;
-	private boolean				detectMarkers = false;
-	private int					markerId = 0;
+	private FaceDetection		faceDetector;
+	private boolean				detectFaces = false;
 	
 	public void execute() throws Exception
 	{
 		int		leftX, leftY, rightX, rightY, deadZone = 10;
-		int		markerCount;
-		boolean found = false;
+		int		faceCount;
+		boolean	found = false;
 
 		logger.info("start");
 	    
@@ -50,9 +48,9 @@ public class FindMarker
 	    
 	    camera = TelloCamera.getInstance();
 	    
-	    // Create instance of Aruco Marker Detection support class.
+	    // Create instance of FaceDetection support class.
 	    
-	    markerDetector = ArucoMarkers.getInstance();
+	    faceDetector = FaceDetection.getInstance();
 	    		
 	    telloControl.setLogLevel(Level.FINE);
 		
@@ -131,46 +129,38 @@ public class FindMarker
 		    			camera.startRecording(System.getProperty("user.dir") + "\\Photos");
 		    	}
 
-		    	// X button toggles marker detection. Note when detectMarkers is true we
-		    	// execute the code on each loop, when false we skip code unless X button
-		    	// is pressed.
-		    	
+		    	// X button toggles face detection.
+
 		    	if (currState.xJustPressed)
 		    	{
-		    		// Toggle detectMarkers on X button.
-		    		detectMarkers = !detectMarkers;
+		    		detectFaces = !detectFaces;
 	    			
-	    			// Clear any target rectangles if marker detection was turned off.
-	    			if  (!detectMarkers) camera.addTarget(null);
+	    			// Clear any target rectangles if face detection is off.
+	    			if  (!detectFaces) camera.addTarget(null);
 		    	}
 		    	
-		    	if (detectMarkers)
+		    	if (detectFaces)
 		    	{
-		    		// Call markerDetection class to see if markers are present in the current
+		    		// Call FaceDetection class to see if faces are present in the current
 		    		// video stream image.
-	    			found = markerDetector.detectMarkers();
-    			
+	    			found = faceDetector.detectFaces();
+	    			
 	    			if (found)
 	    			{
-		    			// How many markers are detected? This is just information.
-	    				markerCount = markerDetector.getMarkerCount();
+		    			// How many faces are detected? This is just information.
+	    				faceCount = faceDetector.getFaceCount();
 	
-	    				logger.finer("marker count=" + markerCount);
+	    				logger.finer("face count=" + faceCount);
 	    				
 	    				// Get the array of rectangles describing the location and size
-	    				// of the detected markers.
-	    				ArrayList<Rect> markers = markerDetector.getMarkerTargets();
+	    				// of the detected faces.
+	    				Rect[] faces = faceDetector.getFaces();
 
-			    		// Clear any previous target rectangles on camera feed.
+		    			// Clear any previous target rectangles.
 		    			camera.addTarget(null);
 	    				
-	    				// Set first marker rectangle to be drawn on video feed.
-	    				camera.addTarget(markers.get(0));
-	    				
-	    				markerId = markerDetector.getMarkerId(0);
-	    			} else {
-		    			camera.addTarget(null);
-	    				markerId = 0;
+	    				// Set first face rectangle to be drawn on video feed.
+	    				camera.addTarget(faces[0]);
 	    			}
 		    	}
 		    	
@@ -235,7 +225,7 @@ public class FindMarker
 	
 	private String updateWindow()
 	{
-    	 return String.format("Batt: %d  Alt: %d  Hdg: %d  Rdy: %b  Detect: %b  Id: %d", drone.getBattery(), drone.getHeight(), 
-    			drone.getHeading(), drone.isFlying(), detectMarkers, markerId);
+    	 return String.format("Batt: %d  Alt: %d  Hdg: %d  Rdy: %b  Detect: %b", drone.getBattery(), drone.getHeight(), 
+    			drone.getHeading(), drone.isFlying(), detectFaces);
 	}
 }

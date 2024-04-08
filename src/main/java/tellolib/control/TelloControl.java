@@ -1,7 +1,7 @@
 package tellolib.control;
 
-import tellolib.camera.MissionDetectionCamera;
-import tellolib.camera.TelloCamera;
+// import tellolib.camera.MissionDetectionCamera;
+// import tellolib.camera.TelloCamera;
 import tellolib.command.BasicTelloCommand;
 import tellolib.command.ComplexTelloCommand;
 import tellolib.command.TelloCommandInterface;
@@ -29,7 +29,7 @@ public class TelloControl implements TelloControlInterface
 	
 	private TelloCommunication 	communication;
 	
-	private TelloCamera			camera;
+	// private TelloCamera			camera;
 	
 	private Thread				statusMonitorThread, keepAliveThread;
 	
@@ -47,7 +47,7 @@ public class TelloControl implements TelloControlInterface
 		  
 		communication = TelloCommunication.getInstance();
 		
-		camera = TelloCamera.getInstance();
+		// camera = TelloCamera.getInstance();
 	}
     
 	private static class SingletonHolder 
@@ -83,7 +83,7 @@ public class TelloControl implements TelloControlInterface
 	{
 		stopStatusMonitor();
 		stopKeepAlive();
-		camera.stopVideoCapture();
+		// camera.stopVideoCapture();
 		  
 		// This will land if we are still flying.
 
@@ -583,27 +583,27 @@ public class TelloControl implements TelloControlInterface
 	    }
 	}
 
-	@Override
-	public void setMissionMode( boolean enabled, MissionDetectionCamera camera )
-	{
-		if (enabled)
-		{
-			TelloCommandInterface command = new BasicTelloCommand(TelloCommandValues.MON);
-			communication.executeCommand(command);
+	// @Override
+	// public void setMissionMode( boolean enabled, MissionDetectionCamera camera )
+	// {
+	// 	if (enabled)
+	// 	{
+	// 		TelloCommandInterface command = new BasicTelloCommand(TelloCommandValues.MON);
+	// 		communication.executeCommand(command);
 
-			command = new ComplexTelloCommand(TelloCommandValues.MDIRECTION, MissionDetectionCamera.toCommand(camera));
-			communication.executeCommand(command);
+	// 		command = new ComplexTelloCommand(TelloCommandValues.MDIRECTION, MissionDetectionCamera.toCommand(camera));
+	// 		communication.executeCommand(command);
 
-			drone.setMissionMode(true);
-		}
-		else
-		{
-			TelloCommandInterface command = new BasicTelloCommand(TelloCommandValues.MOFF);
-			communication.executeCommand(command);
+	// 		drone.setMissionMode(true);
+	// 	}
+	// 	else
+	// 	{
+	// 		TelloCommandInterface command = new BasicTelloCommand(TelloCommandValues.MOFF);
+	// 		communication.executeCommand(command);
 			
-			drone.setMissionMode(false);
-		}
-	}
+	// 		drone.setMissionMode(false);
+	// 	}
+	// }
 
 	@Override
 	public void setStationMode( String ssid, String password )

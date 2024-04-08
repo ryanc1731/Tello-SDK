@@ -1,4 +1,4 @@
-package cs420;
+package tello;
 
 import javax.swing.JFrame;
 import javax.swing.*;
@@ -27,7 +27,7 @@ import java.awt.BorderLayout;
 public class MainScreen {
 	private static JTextField txtSearchAndRescue;
 
-    public static void main(String[] args) {
+    public MainScreen() {
         JFrame frame = new JFrame("My Frame");
         frame.getContentPane().setBackground(new Color(112, 128, 144));
         frame.setSize(800, 600);

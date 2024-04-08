@@ -1,4 +1,4 @@
-package tello;
+package demos;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -65,9 +65,9 @@ public class ControllerTest
 		    
 		    telloControl.startKeepAlive();
 		    
-		    camera.startVideoCapture(true);
+		    // camera.startVideoCapture(true);
 		    
-		    telloControl.setMissionMode(true, MissionDetectionCamera.downward);
+		    // telloControl.setMissionMode(true, MissionDetectionCamera.downward);
 		    
 		    while(true) 
 		    {

@@ -221,11 +221,11 @@ public class TelloDrone implements TelloDroneInterface
 	  return velocity;
   }
 
-  @Override
-  public void setMissionMode( boolean enabled )
-  {
-	  missionModeEnabled = enabled;
-  }
+  // @Override
+  // public void setMissionMode( boolean enabled )
+  // {
+	//   missionModeEnabled = enabled;
+  // }
 
   @Override
   public boolean isMissionModeEnabled()

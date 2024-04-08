@@ -1,20 +1,18 @@
-package tello;
+package demos;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.opencv.core.Rect;
-
 import com.studiohartman.jamepad.ControllerManager;
 import com.studiohartman.jamepad.ControllerState;
 
-import tellolib.camera.FaceDetection;
 import tellolib.camera.TelloCamera;
 import tellolib.command.TelloFlip;
+import tellolib.communication.TelloConnection;
 import tellolib.control.TelloControl;
 import tellolib.drone.TelloDrone;
 
-public class FindFace2
+public class FlyController
 {
 	private final Logger logger = Logger.getGlobal(); 
 
@@ -22,15 +20,15 @@ public class FindFace2
 	private TelloDrone			drone;
 	private TelloCamera			camera;
 	private ControllerManager	controllers;
-	private FaceDetection		faceDetector;
-	private boolean				detectFaces = false;
-	
+
 	public void execute() throws Exception
 	{
 		int		leftX, leftY, rightX, rightY, deadZone = 10;
-		Thread	checkForFacesThread = null;
 
 		logger.info("start");
+
+	    // Create game pad class from the Jamepad library included in this project.
+	    // The class supports multiple controllers.
 	    
 	    controllers = new ControllerManager();
 		controllers.initSDLGamepad();
@@ -46,11 +44,7 @@ public class FindFace2
 	    drone = TelloDrone.getInstance();
 	    
 	    camera = TelloCamera.getInstance();
-	    
-	    // Create instance of FaceDetection support class.
-	    
-	    faceDetector = FaceDetection.getInstance();
-	    		
+
 	    telloControl.setLogLevel(Level.FINE);
 		
 		// Controller mapping:
@@ -58,9 +52,8 @@ public class FindFace2
 		// Back button  = land
 		// A button     = take picture
 	    // B button     = toggle video recording
-	    // X button     = toggle marker detection mode
 	    // Y button     = stop, go into hover
-		// Dpad.up      = flip forward
+	    // Dpad.up      = flip forward
 		//
 		// right joystick Y axis = forward/backward
 		// right joystick X axis = left/right
@@ -73,7 +66,7 @@ public class FindFace2
 		    telloControl.connect();
 		    
 		    telloControl.enterCommandMode();
-		   
+		    
 		    telloControl.startStatusMonitor();
 		    
 		    telloControl.streamOn();
@@ -84,7 +77,7 @@ public class FindFace2
 		   
 		    // Now we loop until land button is pressed or we lose connection.
 		    
-		    while(drone.isConnected()) 
+		    while(telloControl.getConnection() == TelloConnection.CONNECTED) 
 		    {
 		    	// Read the current state of the first (and in our case only)
 		    	// game pad.
@@ -128,26 +121,7 @@ public class FindFace2
 		    			camera.startRecording(System.getProperty("user.dir") + "\\Photos");
 		    	}
 
-		    	// X button toggles face detection.
-		    	
-		    	if (currState.xJustPressed)
-		    	{
-		    		// Toggle detectFaces on X button.
-		    		detectFaces = !detectFaces;
-		    		
-		    		// If true, we start thread to watch for faces else we would
-		    		// already have thread running to we signal it to stop.
-		    		
-	    			if (detectFaces)
-	    			{
-	    				checkForFacesThread = new CheckForFaces();
-	    				checkForFacesThread.start();
-	    			}
-	    			else 
-	    				checkForFacesThread.interrupt();
-		    	}
-		    	
-    			// If flying, pass the controller joystick deflection to the drone via
+		    	// If flying, pass the controller joystick deflection to the drone via
 		    	// the flyRC command.
 		    	
 		    	if (drone.isFlying())
@@ -180,7 +154,7 @@ public class FindFace2
 	    	e.printStackTrace();
 	    } finally 
 	    {
-	    	if (drone.isConnected() && drone.isFlying())
+	    	if (telloControl.getConnection() == TelloConnection.CONNECTED && drone.isFlying())
 	    	{
 	    		try
 	    		{telloControl.land();}
@@ -208,55 +182,8 @@ public class FindFace2
 	
 	private String updateWindow()
 	{
-    	 return String.format("Batt: %d  Alt: %d  Hdg: %d  Rdy: %b  Detect: %b", drone.getBattery(), drone.getHeight(), 
-    			drone.getHeading(), drone.isFlying(), detectFaces);
-	}
-
-	// Class with a class, called a nested or inner class. It has the features of
-	// the Java Tread class and our code to run in the thread.
-	
-	private class CheckForFaces extends Thread
-	{
-		public void run()
-		{
-			boolean	found;
-			int		faceCount;
-			
-			try
-			{
-				while (!isInterrupted())
-				{
-					// Call FaceDetection class to see if faces are present in the current
-					// video stream image.
-					found = faceDetector.detectFaces();
-			
-					// Clear any previous target rectangles.
-					camera.addTarget(null);
-					
-					if (found)
-					{
-						// How many faces are detected? This is just information.
-						faceCount = faceDetector.getFaceCount();
-			
-						logger.finer("face count=" + faceCount);
-						
-						// Get the array of rectangles describing the location and size
-						// of the detected faces.
-						Rect[] faces = faceDetector.getFaces();
-						
-						// Set first face rectangle to be drawn on video feed.
-						camera.addTarget(faces[0]);
-					}
-			    	
-			    	Thread.sleep(200);
-				}
-			} 
-	    	catch (InterruptedException e) {}
-	    	catch (Exception e) {e.printStackTrace();}
-			
-			// Clear any target rectangles if face detection is off.
-			camera.addTarget(null);
-		}
+    	 return String.format("Batt: %d  Alt: %d  Hdg: %d  Rdy: %b", drone.getBattery(), drone.getHeight(), 
+    			drone.getHeading(), drone.isFlying());
 	}
 }
 

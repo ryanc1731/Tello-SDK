@@ -1,4 +1,4 @@
-package tello;
+package demos;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,7 +14,7 @@ import tellolib.command.TelloFlip;
 import tellolib.control.TelloControl;
 import tellolib.drone.TelloDrone;
 
-public class FindFace
+public class FindFace2
 {
 	private final Logger logger = Logger.getGlobal(); 
 
@@ -28,8 +28,7 @@ public class FindFace
 	public void execute() throws Exception
 	{
 		int		leftX, leftY, rightX, rightY, deadZone = 10;
-		int		faceCount;
-		boolean	found = false;
+		Thread	checkForFacesThread = null;
 
 		logger.info("start");
 	    
@@ -130,38 +129,22 @@ public class FindFace
 		    	}
 
 		    	// X button toggles face detection.
-
+		    	
 		    	if (currState.xJustPressed)
 		    	{
+		    		// Toggle detectFaces on X button.
 		    		detectFaces = !detectFaces;
-	    			
-	    			// Clear any target rectangles if face detection is off.
-	    			if  (!detectFaces) camera.addTarget(null);
-		    	}
-		    	
-		    	if (detectFaces)
-		    	{
-		    		// Call FaceDetection class to see if faces are present in the current
-		    		// video stream image.
-	    			found = faceDetector.detectFaces();
-	    			
-	    			if (found)
+		    		
+		    		// If true, we start thread to watch for faces else we would
+		    		// already have thread running to we signal it to stop.
+		    		
+	    			if (detectFaces)
 	    			{
-		    			// How many faces are detected? This is just information.
-	    				faceCount = faceDetector.getFaceCount();
-	
-	    				logger.finer("face count=" + faceCount);
-	    				
-	    				// Get the array of rectangles describing the location and size
-	    				// of the detected faces.
-	    				Rect[] faces = faceDetector.getFaces();
-
-		    			// Clear any previous target rectangles.
-		    			camera.addTarget(null);
-	    				
-	    				// Set first face rectangle to be drawn on video feed.
-	    				camera.addTarget(faces[0]);
+	    				checkForFacesThread = new CheckForFaces();
+	    				checkForFacesThread.start();
 	    			}
+	    			else 
+	    				checkForFacesThread.interrupt();
 		    	}
 		    	
     			// If flying, pass the controller joystick deflection to the drone via
@@ -228,4 +211,52 @@ public class FindFace
     	 return String.format("Batt: %d  Alt: %d  Hdg: %d  Rdy: %b  Detect: %b", drone.getBattery(), drone.getHeight(), 
     			drone.getHeading(), drone.isFlying(), detectFaces);
 	}
+
+	// Class with a class, called a nested or inner class. It has the features of
+	// the Java Tread class and our code to run in the thread.
+	
+	private class CheckForFaces extends Thread
+	{
+		public void run()
+		{
+			boolean	found;
+			int		faceCount;
+			
+			try
+			{
+				while (!isInterrupted())
+				{
+					// Call FaceDetection class to see if faces are present in the current
+					// video stream image.
+					found = faceDetector.detectFaces();
+			
+					// Clear any previous target rectangles.
+					camera.addTarget(null);
+					
+					if (found)
+					{
+						// How many faces are detected? This is just information.
+						faceCount = faceDetector.getFaceCount();
+			
+						logger.finer("face count=" + faceCount);
+						
+						// Get the array of rectangles describing the location and size
+						// of the detected faces.
+						Rect[] faces = faceDetector.getFaces();
+						
+						// Set first face rectangle to be drawn on video feed.
+						camera.addTarget(faces[0]);
+					}
+			    	
+			    	Thread.sleep(200);
+				}
+			} 
+	    	catch (InterruptedException e) {}
+	    	catch (Exception e) {e.printStackTrace();}
+			
+			// Clear any target rectangles if face detection is off.
+			camera.addTarget(null);
+		}
+	}
 }
+
