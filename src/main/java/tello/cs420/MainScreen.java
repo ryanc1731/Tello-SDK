@@ -1,46 +1,33 @@
-package cs420;
+package tello.cs420;
 
 import javax.swing.JFrame;
 import javax.swing.*;
-import java.awt.FlowLayout;
 import javax.swing.JButton;
-import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import javax.swing.BoxLayout;
-import javax.swing.JTextField;
 import java.awt.Font;
-import java.awt.Graphics;
-
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
-import java.awt.SystemColor;
-import javax.swing.UIManager;
 import java.awt.Color;
-import java.awt.Dimension;
-
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
    
-    
 public class MainScreen {
-	private static JTextField txtSearchAndRescue;
 
-    public static void main(String[] args) {
+    public MainScreen() {
         JFrame frame = new JFrame("My Frame");
         frame.getContentPane().setBackground(new Color(112, 128, 144));
         frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel MainPage = new JPanel();
-        MainPage.setBackground(new Color(255, 200, 153));
+        MainPage.setBackground(new Color(255, 140, 75));
         MainPage.setLayout(null);
         frame.getContentPane().add(MainPage);
         
         
                 JButton btn1 = new JButton("Enter Coordinates");
-                btn1.setBounds(330, 200, 140, 29);
+                btn1.setBounds(330, 260, 140, 29);
                 MainPage.add(btn1);
                 
                 
@@ -52,7 +39,7 @@ public class MainScreen {
                 
                 JButton btnNewButton = new JButton("Scan Parameter");
                 MainPage.add(btnNewButton);
-                btnNewButton.setBounds(330, 260, 140, 29);
+                btnNewButton.setBounds(330, 230, 140, 29);
                 
                 JButton prBtn = new JButton("Previous Results");
                 MainPage.add(prBtn);
@@ -60,34 +47,31 @@ public class MainScreen {
                 	public void actionPerformed(ActionEvent e) {
                 	}
                 });
-                prBtn.setBounds(330, 290, 140, 29);
+                prBtn.setBounds(330, 320, 140, 29);
+            
                 
-                JButton ssBtn = new JButton("Screenshot");
+                JButton ssBtn = new JButton("Live Feed");
                 MainPage.add(ssBtn);
-                ssBtn.setBounds(330, 230, 140, 29);
+                ssBtn.setBounds(330, 290, 140, 29);
                 
                 JButton BasicBtn = new JButton("Basic Functions");
                 MainPage.add(BasicBtn);
-                BasicBtn.setBounds(330, 320, 140, 29);
+                BasicBtn.setBounds(330, 200, 140, 29);
                 
                 
                 JLabel lblNewLabel = new JLabel("New label");
-                lblNewLabel.setIcon(new ImageIcon("/Users/sadieyoung/Downloads/fire2.jpg"));
+                lblNewLabel.setIcon(new ImageIcon("Photos/fire2.jpg"));
                 lblNewLabel.setBounds(364, 48, 70, 65);
                 MainPage.add(lblNewLabel);
                 
-                JButton btnNewButton_1_1 = new JButton("Emergency Land");
-                btnNewButton_1_1.setBackground(new Color(255, 99, 71));
-                btnNewButton_1_1.addActionListener(new ActionListener() {
-                	public void actionPerformed(ActionEvent e) {
-                	}
-                });
-                btnNewButton_1_1.setBounds(450, 398, 140, 50);
-                MainPage.add(btnNewButton_1_1);
+                JButton Land = new JButton("Emergency Land");
+                Land.setBackground(new Color(255, 99, 71));
+                Land.setBounds(450, 398, 140, 50);
+                MainPage.add(Land);
                 
-                JButton btnNewButton_1_2 = new JButton("Return To Base");
-                btnNewButton_1_2.setBounds(240, 398, 140, 50);
-                MainPage.add(btnNewButton_1_2);
+                JButton Return = new JButton("Return To Base");
+                Return.setBounds(240, 398, 140, 50);
+                MainPage.add(Return);
                 
                 JPanel CoordinatesPanel = new JPanel();
                 CoordinatesPanel.setBackground(new Color(192, 192, 192));
@@ -140,7 +124,7 @@ public class MainScreen {
         JDialog dialog = new JDialog(parentFrame, "Scan Perimeter Page", true);
         dialog.getContentPane().setLayout(new BorderLayout());
         dialog.getContentPane().add(scanPerimeterPagePanel, BorderLayout.CENTER);
-        dialog.setSize(800, 600);
+        dialog.setSize(800, 650);
         dialog.setLocationRelativeTo(parentFrame);
         dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         dialog.setVisible(true);
@@ -150,7 +134,7 @@ public class MainScreen {
     private static void showScreenshot(JFrame parentFrame) {
     	TakeScreenshotPage takeScreenshotPage = new TakeScreenshotPage();
 
-        JDialog dialog = new JDialog(parentFrame, "Screenshot Page", true);
+        JDialog dialog = new JDialog(parentFrame, "Live Feed & Screenshot Page", true);
         dialog.getContentPane().setLayout(new BorderLayout());
         dialog.getContentPane().add(takeScreenshotPage, BorderLayout.CENTER);
         dialog.setSize(800, 700);
@@ -181,4 +165,3 @@ public class MainScreen {
         dialog.setVisible(true);
     }
 }
-

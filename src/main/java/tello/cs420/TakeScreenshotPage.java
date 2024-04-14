@@ -1,10 +1,9 @@
-package cs420;
+package tello.cs420;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
+import javax.swing.JLabel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -12,38 +11,34 @@ import javax.swing.JPanel;
 public class TakeScreenshotPage extends JPanel {
 	
     public TakeScreenshotPage() {
-        setBackground(Color.WHITE);
+        setLayout(null);
+    
 
         JButton takeSceenshotBtn = new JButton("Take Screenshot");
-        takeSceenshotBtn.setBounds(462, 6, 124, 59);
+        takeSceenshotBtn.setBounds(570, 15, 124, 59);
         takeSceenshotBtn.setPreferredSize(new Dimension(50, 50));
-        takeSceenshotBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                
-            }
-        });
+
         setLayout(null);
         add(takeSceenshotBtn);
         
         JButton LandBtn = new JButton("Emergency Land");
         LandBtn.setBackground(new Color(255, 99, 71));
-        LandBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Implement the logic for emergency landing here
-            }
-        });
-        LandBtn.setBounds(335, 405, 140, 50);
+        LandBtn.setBounds(450, 600, 140, 50);
         add(LandBtn);
 
         JButton ReturnBtn = new JButton("Return To Base");
-        ReturnBtn.setBounds(130, 405, 140, 50);
+        ReturnBtn.setBounds(250, 600, 140, 50);
         add(ReturnBtn);
         
         
         JPanel liveFeedPanel = new JPanel();
         liveFeedPanel.setBackground(Color.LIGHT_GRAY);
-        liveFeedPanel.setBounds(50, 80, 500, 300); // Adjust the bounds as needed
+        liveFeedPanel.setBounds(50, 100, 700, 450); 
         add(liveFeedPanel);
+    
+        ImageIcon backgroundImageIcon = new ImageIcon("Photos/abstract.jpg"); 
+            JLabel backgroundImageLabel = new JLabel(backgroundImageIcon);
+            backgroundImageLabel.setBounds(0, 0, backgroundImageIcon.getIconWidth(), backgroundImageIcon.getIconHeight());
+            add(backgroundImageLabel);
     }
 }

@@ -1,20 +1,19 @@
-package cs420;
+package tello.cs420;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class BasicFxnsPage extends JPanel {
     public BasicFxnsPage() {
-        setBackground(Color.WHITE);
+        
+        setBackground(new Color(175, 214, 230));
         
         JButton takeoffBtn = new JButton("Take Off");
-        takeoffBtn.setBounds(500, 50, 124, 59);
+        takeoffBtn.setBounds(600, 50, 124, 59);
         takeoffBtn.setPreferredSize(new Dimension(50, 50));
         takeoffBtn.addActionListener(new ActionListener() {
             @Override
@@ -45,16 +44,18 @@ public class BasicFxnsPage extends JPanel {
         
         JButton LandBtn = new JButton("Emergency Land");
         LandBtn.setBackground(new Color(255, 99, 71));
-        LandBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
-        LandBtn.setBounds(400, 500, 140, 50);
+        LandBtn.setBounds(400, 580, 140, 50);
         add(LandBtn);
 
         JButton ReturnBtn = new JButton("Return To Base");
-        ReturnBtn.setBounds(200, 500, 140, 50);
+        ReturnBtn.setBounds(200, 580, 140, 50);
         add(ReturnBtn);
+
+                
+        JPanel liveFeedPanel = new JPanel();
+        liveFeedPanel.setBackground(Color.LIGHT_GRAY);
+        liveFeedPanel.setBounds(280, 160, 470, 340);
+        add(liveFeedPanel);
     }
 }
        

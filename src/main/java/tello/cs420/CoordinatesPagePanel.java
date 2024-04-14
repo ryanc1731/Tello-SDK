@@ -1,19 +1,17 @@
-package cs420;
+package tello.cs420;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class CoordinatesPagePanel extends JPanel {
-    private static final int CELL_SIZE = 40;
     private static final int GRID_SIZE = 20;
+    private static final int CELL_SIZE = 40;
 
     JTextField xField = new JTextField(5);
     JTextField yField = new JTextField(5);
 
-    private int dotX = -1; // X-coordinate of the dot
-    private int dotY = -1; // Y-coordinate of the dot
+    private int dotX = -1;
+    private int dotY = -1; 
 
     public CoordinatesPagePanel() {
         setLayout(new BorderLayout());
@@ -40,15 +38,9 @@ public class CoordinatesPagePanel extends JPanel {
         }
         add(xAxisPanel, BorderLayout.SOUTH);
 
-        JPanel yAxisPanel = new JPanel(new GridLayout(GRID_SIZE, 1));
-        for (int i = GRID_SIZE; i > 0; i--) {
-            JLabel label = new JLabel(String.valueOf(i));
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            yAxisPanel.add(label);
-        }
-        add(yAxisPanel, BorderLayout.WEST);
         xField.addActionListener(e -> addCoordinate());
         yField.addActionListener(e -> addCoordinate());
+
 
         JPanel inputPanel = new JPanel();
         inputPanel.add(new JLabel("X:"));
@@ -58,27 +50,25 @@ public class CoordinatesPagePanel extends JPanel {
 
         add(inputPanel, BorderLayout.NORTH);
     }
-    
-
     private void drawGrid(Graphics g) {
         g.setColor(Color.BLACK);
         int cellWidth = getWidth() / GRID_SIZE;
         int cellHeight = getHeight() / GRID_SIZE;
 
-        // Draw horizontal lines and labels
-        for (int i = 0; i < GRID_SIZE; i++) {
-            int y = i * cellHeight;
-            g.drawLine(0, y, getWidth(), y); // Horizontal lines
-            int labelY = y + cellHeight / 2; // Adjusted label Y-coordinate
-            g.drawString(String.valueOf(GRID_SIZE - i), cellWidth / 4, labelY); // Draw label
-        }
+        int marginX = (getWidth() - GRID_SIZE * cellWidth) / 2;
+        int marginY = (getHeight() - GRID_SIZE * cellHeight) / 2;
 
-        // Draw vertical lines and labels
         for (int i = 0; i < GRID_SIZE; i++) {
-            int x = i * cellWidth;
-            g.drawLine(x, 0, x, getHeight()); // Vertical lines
-            int labelX = x + cellWidth / 2; // Adjusted label X-coordinate
-            g.drawString(String.valueOf(i + 1), labelX, getHeight() - cellHeight / 4); // Draw label
+            int y = marginY + i * cellHeight;
+            g.drawLine(marginX, y, getWidth() - marginX, y); 
+            int labelY = y + cellHeight / 2; 
+            g.drawString(String.valueOf(GRID_SIZE - i - 1), marginX / 2, labelY); 
+        }
+        for (int i = 0; i < GRID_SIZE; i++) {
+            int x = marginX + i * cellWidth;
+            g.drawLine(x, marginY, x, getHeight() - marginY); 
+            int labelX = x + cellWidth / 2; 
+            g.drawString(String.valueOf(i), labelX, getHeight() - marginY / 2);
         }
     }
 
@@ -89,56 +79,65 @@ public class CoordinatesPagePanel extends JPanel {
         int dotY = getHeight() - (y + 1) * CELL_SIZE;
         g.fillOval(dotX, dotY, dotSize, dotSize);
     }
-
     private void addCoordinate() {
-        // Retrieve coordinates from text fields
         String xText = xField.getText();
         String yText = yField.getText();
 
-        // Check if both x and y coordinates are provided
         if (!xText.isEmpty() && !yText.isEmpty()) {
             try {
-                // Parse coordinates as integers
                 int x = Integer.parseInt(xText);
                 int y = Integer.parseInt(yText);
 
-                // Store the dot coordinates
                 dotX = x;
                 dotY = y;
 
-                // Customize the message
                 String message = "Coordinates (" + x + ", " + y + ") were entered.";
 
-                // Get the top-level window ancestor
                 Window topLevelWindow = SwingUtilities.getWindowAncestor(this);
                 if (topLevelWindow instanceof JFrame) {
-                    // If the ancestor is a JFrame, cast it and use it
                     JFrame topFrame = (JFrame) topLevelWindow;
                     JOptionPane.showMessageDialog(topFrame, message);
                 } else if (topLevelWindow instanceof JDialog) {
-                    // If the ancestor is a JDialog, cast it and use it
                     JDialog topDialog = (JDialog) topLevelWindow;
                     JOptionPane.showMessageDialog(topDialog, message);
                 } else {
-                    // Handle other cases (this shouldn't happen in typical Swing applications)
                     JOptionPane.showMessageDialog(null, message);
                 }
-
-                // Request a repaint to update the dot position
                 repaint();
-
-                // Clear the text fields for next input
+                showCoordinatePopup(x, y);
                 xField.setText("");
                 yField.setText("");
             } catch (NumberFormatException ex) {
-                // Handle invalid input format
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
                 JOptionPane.showMessageDialog(topFrame, "Invalid coordinates. Please enter integers.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            // Handle case when either x or y (or both) are not provided
             JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
             JOptionPane.showMessageDialog(topFrame, "Please enter both X and Y coordinates.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        
     }
+    private void showCoordinatePopup(int x, int y) {
+        JPanel panel = new JPanel();
+        JLabel label = new JLabel("Coordinates (" + x + ", " + y + ") were entered.");
+        panel.add(label);
+    
+        Window parentWindow = SwingUtilities.getWindowAncestor(this);
+        int parentX = parentWindow.getX();
+        int parentY = parentWindow.getY();
+        int parentWidth = parentWindow.getWidth();
+        int parentHeight = parentWindow.getHeight();
+        int popupWidth = 600;
+        int popupHeight = 400;
+        int popupX = parentX + (parentWidth - popupWidth) / 2 + 400;
+        int popupY = parentY + (parentHeight - popupHeight) / 2;
+        JDialog popup = new JDialog(parentWindow, "Live Feed", Dialog.ModalityType.APPLICATION_MODAL);
+        popup.getContentPane().add(panel);
+        popup.setSize(popupWidth, popupHeight);
+        popup.setLocation(popupX, popupY);
+        popup.setVisible(true);
+
+        
+    }
+    
 }
